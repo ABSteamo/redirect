@@ -1,46 +1,25 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>نظام التحويل الذكي</title>
-  <script>
-    async function redirect() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
-
-      if (!id) {
-        document.body.innerHTML = "<h2 style='text-align:center;color:red;'>❌ لم يتم اختيار رابط</h2>";
-        return;
-      }
-
-      try {
-        // تحميل ملف الروابط
-        let res = await fetch("links.json");
-        let links = await res.json();
-
-        if (!links[id]) {
-          document.body.innerHTML = "<h2 style='text-align:center;color:red;'>❌ الرابط غير موجود</h2>";
-          return;
-        }
-
-        const { original, backup } = links[id];
-
-        // تجربة الرابط الأصلي
-        let check = await fetch(original, { method: "HEAD" });
-        if (check.ok) {
-          window.location.href = original;
-        } else {
-          window.location.href = backup;
-        }
-      } catch (e) {
-        document.body.innerHTML = "<h2 style='text-align:center;color:red;'>⚠️ خطأ في تحميل الروابط</h2>";
-      }
-    }
-
-    redirect();
-  </script>
+  <title>Test Fallback Link</title>
+  <style>
+    #iframeArea { width: 0; height: 0; border: none; }
+    #fallbackBtn { display: none; }
+  </style>
 </head>
 <body>
-  <h1 style="text-align:center;">🔗 جاري التحويل...</h1>
+  <h1>Test Fallback Link</h1>
+  <button onclick="tryLink()">Go to Link</button>
+  <button id="fallbackBtn" onclick="window.location.href='https://your-fallback-link.com'">Fallback Link</button>
+  <iframe id="iframeArea"></iframe>
+  <script>
+    function tryLink() {
+      document.getElementById('iframeArea').src = 'https://your-main-link.com';
+      setTimeout(() => {
+        document.getElementById('fallbackBtn').style.display = 'inline';
+        alert("Main link may not have loaded. Try fallback!");
+      }, 5000); // 5 seconds to try loading
+    }
+  </script>
 </body>
 </html>
