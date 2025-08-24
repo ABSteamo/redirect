@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>روابط متعددة مع احتياطي</title>
+  <title>روابط متعددة مع رابط احتياطي يظهر عند الحاجة</title>
   <style>
     .item { margin-bottom: 30px; }
     .fallbackBtn { display: none; margin-top: 10px; }
@@ -13,7 +13,7 @@
   <h1>روابط تحميل وفيديو مع احتياطي</h1>
   <div id="links"></div>
   <script>
-    // قائمة الروابط (أضف ما تريد هنا!)
+    // أضف الروابط هنا (اسم، رابط أساسي، رابط احتياطي)
     const items = [
       {
         name: "فيديو 1",
@@ -30,32 +30,38 @@
         main: "https://example.com/book",
         fallback: "https://backup.com/book"
       }
-      // أضف المزيد بنفس الطريقة
+      // أضف المزيد بنفس الشكل
     ];
 
     function tryMainLink(mainUrl, fallbackBtn, iframeArea) {
       iframeArea.src = mainUrl;
       iframeArea.style.display = 'block';
       fallbackBtn.style.display = 'none';
+
       // إذا لم يتم التحميل خلال 5 ثواني، أظهر زر الاحتياطي
-      setTimeout(() => {
+      const fallbackTimer = setTimeout(() => {
         fallbackBtn.style.display = 'inline-block';
+        alert("الرابط الأساسي لم يتم تحميله، جرب الرابط الاحتياطي!");
       }, 5000);
+
+      // إذا تم التحميل بنجاح داخل iframe
       iframeArea.onload = function() {
+        clearTimeout(fallbackTimer);
         fallbackBtn.style.display = 'none';
+        alert("تم تحميل الرابط الأساسي بنجاح!");
       };
     }
 
     // بناء العناصر في الصفحة
     const container = document.getElementById('links');
-    items.forEach(item => {
+    items.forEach((item, idx) => {
       const div = document.createElement('div');
       div.className = 'item';
       div.innerHTML = `
         <h3>${item.name}</h3>
         <button onclick="window.open('${item.main}', '_blank');">الرابط الأساسي</button>
         <button class="fallbackBtn" onclick="window.open('${item.fallback}', '_blank');">الرابط الاحتياطي</button>
-        <button onclick="tryMainLink('${item.main}', this.nextElementSibling, this.nextElementSibling.nextElementSibling)">اختبر الرابط الأساسي</button>
+        <button onclick="tryMainLink('${item.main}', this.previousElementSibling, this.nextElementSibling)">جرب الرابط الأساسي</button>
         <iframe class="iframeArea"></iframe>
       `;
       container.appendChild(div);
