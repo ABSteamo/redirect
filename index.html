@@ -2,38 +2,67 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>اختبار الرابط الاحتياطي</title>
+  <title>روابط متعددة مع احتياطي</title>
   <style>
-    #fallbackBtn { display: none; margin-top: 10px; }
-    #iframeArea { display: none; }
+    .item { margin-bottom: 30px; }
+    .fallbackBtn { display: none; margin-top: 10px; }
+    .iframeArea { display: none; }
   </style>
 </head>
 <body>
-  <h1>اختبار رابط التحويل الاحتياطي</h1>
-  <button id="mainBtn" onclick="tryMainLink(https://youtu.be/8C-5M5FSEis?si=zpeJv9TvWY16bN9N)">اذهب إلى الرابط الأساسي</button>
-  <button id="fallbackBtn" onclick="window.location.href='https://youtu.be/8C-5M5FSEis?si=zpeJv9TvWY16bN9N'">اذهب إلى الرابط الاحتياطي</button>
-  <iframe id="iframeArea"></iframe>
+  <h1>روابط تحميل وفيديو مع احتياطي</h1>
+  <div id="links"></div>
   <script>
-    function tryMainLink() {
-      // أخفي زر الرابط الأساسي وأظهر الـ iframe لمحاولة التحميل
-      document.getElementById('mainBtn').style.display = 'none';
-      var iframe = document.getElementById('iframeArea');
-      iframe.src = 'https://الرابط-الأساسي.com';
-      iframe.style.display = 'block';
+    // قائمة الروابط (أضف ما تريد هنا!)
+    const items = [
+      {
+        name: "فيديو 1",
+        main: "https://example.com/video1",
+        fallback: "https://backup.com/video1"
+      },
+      {
+        name: "تطبيق 1",
+        main: "https://example.com/app1",
+        fallback: "https://backup.com/app1"
+      },
+      {
+        name: "تحميل كتاب",
+        main: "https://example.com/book",
+        fallback: "https://backup.com/book"
+      }
+      // أضف المزيد بنفس الطريقة
+    ];
 
-      // إذا لم يتم تحميل الصفحة خلال 5 ثواني، أظهر زر الرابط الاحتياطي
-      var fallbackTimer = setTimeout(function() {
-        document.getElementById('fallbackBtn').style.display = 'inline-block';
-        alert("الرابط الأساسي لم يتم تحميله، جرب الرابط الاحتياطي!");
+    function tryMainLink(mainUrl, fallbackBtn, iframeArea) {
+      iframeArea.src = mainUrl;
+      iframeArea.style.display = 'block';
+      fallbackBtn.style.display = 'none';
+      // إذا لم يتم التحميل خلال 5 ثواني، أظهر زر الاحتياطي
+      setTimeout(() => {
+        fallbackBtn.style.display = 'inline-block';
       }, 5000);
-
-      // إذا تم تحميل الصفحة بنجاح داخل iframe، أخفي زر الاحتياطي (بعض المواقع قد تمنع إظهار الحدث بسبب السياسات)
-      iframe.onload = function() {
-        clearTimeout(fallbackTimer);
-        // يمكنك هنا التحويل مباشرة أو إعطاء إشعار بالنجاح
-        alert("تم تحميل الرابط الأساسي بنجاح!");
+      iframeArea.onload = function() {
+        fallbackBtn.style.display = 'none';
       };
     }
+
+    // بناء العناصر في الصفحة
+    const container = document.getElementById('links');
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <h3>${item.name}</h3>
+        <button onclick="window.open('${item.main}', '_blank');">الرابط الأساسي</button>
+        <button class="fallbackBtn" onclick="window.open('${item.fallback}', '_blank');">الرابط الاحتياطي</button>
+        <button onclick="tryMainLink('${item.main}', this.nextElementSibling, this.nextElementSibling.nextElementSibling)">اختبر الرابط الأساسي</button>
+        <iframe class="iframeArea"></iframe>
+      `;
+      container.appendChild(div);
+    });
+
+    // تعريف الدالة في النطاق العام
+    window.tryMainLink = tryMainLink;
   </script>
 </body>
 </html>
