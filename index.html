@@ -2,24 +2,10 @@
 <html>
 <head>
   <title>Test Fallback Link</title>
-  <style>
-    #iframeArea { width: 0; height: 0; border: none; }
-    #fallbackBtn { display: none; }
-  </style>
 </head>
 <body>
   <h1>Test Fallback Link</h1>
-  <button onclick="tryLink()">Go to Link</button>
-  <button id="fallbackBtn" onclick="window.location.href='https://youtu.be/APw-S7PAk-k?si=DT1bZF6y2-n269-M'">Fallback Link</button>
-  <iframe id="iframeArea"></iframe>
-  <script>
-    function tryLink() {
-      document.getElementById('iframeArea').src = 'https://your-main-link.com';
-      setTimeout(() => {
-        document.getElementById('fallbackBtn').style.display = 'inline';
-        alert("Main link may not have loaded. Try fallback!");
-      }, 5000); // 5 seconds to try loading
-    }
-  </script>
+  <button onclick="window.location.href='https://your-main-link.com'">Go to Main Link</button>
+  <button onclick="window.location.href='https://your-fallback-link.com'">Go to Fallback Link</button>
 </body>
 </html>
