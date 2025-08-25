@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vercel Protected Backup Link Example</title>
+</head>
+<body>
+  <h1>Protected Backup Link Example</h1>
+  <button id="checkBtn">Check Main Link</button>
+  <button id="backupBtn" style="display:none;">Backup Link</button>
+  <script>
+    const mainLink = "https://example.com/main.mp4";
+    const backupLink = "https://backup.com/main.mp4";
+    let backupAllowed = false;
+
+    document.getElementById('checkBtn').onclick = async () => {
+      const resp = await fetch(`/api/checkMainLink?url=${encodeURIComponent(mainLink)}`);
+      const data = await resp.json();
+      if (data.status === "down") {
+        document.getElementById('backupBtn').style.display = "inline-block";
+        backupAllowed = true;
+      } else {
+        alert("Main link is up!");
+      }
+    };
+
+    document.getElementById('backupBtn').onclick = () => {
+      if (backupAllowed) window.open(backupLink, "_blank");
+    };
+  </script>
+</body>
+</html>
